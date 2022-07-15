@@ -77,6 +77,8 @@ inline std::ostream& operator<<(std::ostream &out, const Vec3 &v)
 	return out;
 }
 
+using Point3 = Vec3;
+
 inline Vec3 operator+(Vec3 const& u, Vec3 const& v) { return Vec3(u) += v; }
 inline Vec3 operator-(Vec3 const& u, Vec3 const& v) { return Vec3(u) -= v; }
 inline Vec3 operator*(Vec3 const& u, Vec3 const& v) { return Vec3(u) *= v; }
@@ -98,7 +100,7 @@ inline Vec3 cross(Vec3 const& u, Vec3 const& v)
 	);
 }
 
-inline Vec3 unit_vector(Vec3 const& v) 
+inline Vec3 unitVector(Vec3 const& v) 
 {
 	return v / v.length();
 }

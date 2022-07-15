@@ -7,15 +7,39 @@
 
 #include "Vec3.h"
 #include "Color.h"
+#include "Ray.h"
 
-constexpr size_t IMAGE_WIDTH  = 2560;
-constexpr size_t IMAGE_HEIGHT = 2560;
 const     char*  OUT_FILENAME = "image.png";
+
+// Image
+constexpr float  ASPECT_RATIO = 16.f / 9.f;
+constexpr size_t IMAGE_WIDTH  = 1080;
+constexpr size_t IMAGE_HEIGHT = static_cast<size_t>(IMAGE_WIDTH / ASPECT_RATIO);
+
+// Camera
+constexpr float VIEWPORT_HEIGHT = 2.0f;
+constexpr float VIEWPORT_WIDTH  = VIEWPORT_HEIGHT * ASPECT_RATIO;
+constexpr float FOCAL_LENGTH    = 1.0f;
+
+Color computeRayColor(Ray ray)
+{
+    Vec3 unitDirection = unitVector(ray.direction());
+    float t = 0.5f * (unitDirection.y() + 1.0f);
+
+    return (1.0f - t) * Color(1.0f, 1.0f, 1.0f) + t * Color(0.5f, 0.7f, 1.0f);
+}
 
 int main()
 {
     std::cout << "Ray Tracing in One Weekend !" << std::endl;
 
+    Point3 origin     (           0.f,             0.f, 0.f);
+    Vec3   horizontal (VIEWPORT_WIDTH,             0.f, 0.f);
+    Vec3   vertical   (           0.f, VIEWPORT_HEIGHT, 0.f);
+
+    Point3 lowerLeftCorner = origin - horizontal/2 - vertical/2 - Vec3(0.f, 0.f, FOCAL_LENGTH);
+
+    // Rendering
     std::vector<Color_uint8_t> imagePixels;
     imagePixels.reserve(IMAGE_WIDTH * IMAGE_HEIGHT);
 
@@ -24,11 +48,15 @@ int main()
         std::cout << "\rRendering: " << i * 100 / IMAGE_HEIGHT << "%" << std::flush;
         for (size_t j = 0; j < IMAGE_WIDTH; j++) 
         {
-            Color pixel(
-                static_cast<float>(IMAGE_HEIGHT - i) / (IMAGE_HEIGHT - 1),
-                static_cast<float>(j)                / (IMAGE_WIDTH - 1),
-                0.25f
+            float u = static_cast<float>(IMAGE_HEIGHT - i) / (IMAGE_HEIGHT - 1);
+            float v = static_cast<float>(j)                / (IMAGE_WIDTH - 1);
+
+            Ray ray(
+                origin,
+                lowerLeftCorner + u * horizontal + v * vertical - origin
             );
+
+            Color pixel = computeRayColor(ray);
 
             imagePixels.push_back(pixel.to8bit());
         }
