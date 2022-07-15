@@ -1,38 +1,39 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cstdint>
 
 #include <stb_image_write.h>
+
+#include "Vec3.h"
+#include "Color.h"
+
+constexpr size_t IMAGE_WIDTH  = 2560;
+constexpr size_t IMAGE_HEIGHT = 2560;
+const     char*  OUT_FILENAME = "image.png";
 
 int main()
 {
     std::cout << "Ray Tracing in One Weekend !" << std::endl;
-    
-    constexpr size_t imageWidth  = 2560;
-    constexpr size_t imageHeight = 2560;
 
-    std::vector<uint8_t> imageData;
-    imageData.reserve(3 * imageWidth * imageHeight);
+    std::vector<Color_uint8_t> imagePixels;
+    imagePixels.reserve(IMAGE_WIDTH * IMAGE_HEIGHT);
 
-    for (size_t i = 0; i < imageHeight; i++)
+    for (size_t i = 0; i < IMAGE_HEIGHT; i++)
     {
-        std::cout << "\rRendering: " << i * 100 / imageHeight << "%" << std::flush;
-        for (size_t j = 0; j < imageWidth; j++) 
+        std::cout << "\rRendering: " << i * 100 / IMAGE_HEIGHT << "%" << std::flush;
+        for (size_t j = 0; j < IMAGE_WIDTH; j++) 
         {
-            double r = static_cast<double>(imageHeight - i) / (imageHeight - 1);
-            double g = static_cast<double>(j)               / (imageWidth - 1);
-            double b = 0.25;
+            Color pixel(
+                static_cast<float>(IMAGE_HEIGHT - i) / (IMAGE_HEIGHT - 1),
+                static_cast<float>(j)                / (IMAGE_WIDTH - 1),
+                0.25f
+            );
 
-            uint8_t ir = static_cast<uint8_t>(255.999 * r);
-            uint8_t ig = static_cast<uint8_t>(255.999 * g);
-            uint8_t ib = static_cast<uint8_t>(255.999 * b);
-
-            imageData.push_back(ir);
-            imageData.push_back(ig);
-            imageData.push_back(ib);
+            imagePixels.push_back(pixel.to8bit());
         }
     }
     std::cout << "\33[2K\rRendering: Done." << std::endl;
     
-    stbi_write_png("image.png", imageWidth, imageHeight, 3, imageData.data(), 0);
+    stbi_write_png(OUT_FILENAME, IMAGE_WIDTH, IMAGE_HEIGHT, 3, imagePixels.data(), 0);
 }
