@@ -9,9 +9,10 @@
 #include "Vec3.h"
 #include "Color.h"
 #include "Ray.h"
+#include "Hittable.h"
 #include "Sphere.h"
 
-const     char*  OUT_FILENAME = "image.png";
+const char* OUT_FILENAME = "image.png";
 
 // Image
 constexpr float  ASPECT_RATIO = 16.f / 9.f;
@@ -25,51 +26,24 @@ constexpr float FOCAL_LENGTH    = 1.0f;
 
 const Sphere g_sphere(Point3(0.f, 0.f, -1.f), 0.5f);
 
-bool doHitSphere(Ray const& ray, Sphere const& sphere)
-{
-    /*
-        Let 
-          C the center
-         and 
-          r the radius 
-        of a sphere in this space.
-                
-        Let P(t) a ray
-        P(t) = A + tb
-        with 
-          A the origin    of the ray
-          b the direction of the ray
-        
-        P(t) is on the sphere if
-            (P(t) - C) . (P(t) - C) = r²
-        <=> (A + tb - C) . (A + tb - C) = r²
-        <=> t²b . b + 2tb . (A - C) + (A - C) . (A - C) - r² = 0
-        Identify to the form ax² + bx + c --> 
-          a = (b . b)                = ||b||²
-          b = 2b . (A - C)
-          c = (A - C) . (A - C) - r² = ||(A - C)||² - r²
-        And
-          delta = b² - 4ac
-    */
-    Vec3 oc = ray.origin() - sphere.center();
-    float a = ray.direction().length_squared();
-    float b = 2 * dot(ray.direction(), oc);
-    float c = oc.length_squared() - (sphere.radius() * sphere.radius());
-
-    float delta = b * b - 4 * a * c;
-
-    return delta > 0.f;
-}
-
 Color computeRayColor(Ray ray)
 {
-    Vec3 unitDirection = unitVector(ray.direction());
-    float t = 0.5f * (unitDirection.y() + 1.f);
-    Color color = doHitSphere(ray, g_sphere)
-        ? Color(1.f, 0.f, 0.f)  // Red
-        : (1.f - t) * Color(1.f, 1.f, 1.f) + t * Color(0.5f, 0.7f, 1.f);
-
-    return color;
+    Hit hit;
+    if (g_sphere.hit(ray, -1.f, 1.f, hit))
+    {
+        return Color(
+            (hit.normal.x() + 1.f) * 0.5f,
+            (hit.normal.y() + 1.f) * 0.5f,
+            (hit.normal.z() + 1.f) * 0.5f
+        );
+    }
+    else
+    {
+        Vec3 unitDirection = unitVector(ray.direction());
+        float t = 0.5f * (unitDirection.y() + 1.0f);
+        return (1.f - t) * Color(1.0f, 1.0f, 1.0f) 
+             + t         * Color(0.5f, 0.7f, 1.0f);
+    }
 }
 
 int main()
