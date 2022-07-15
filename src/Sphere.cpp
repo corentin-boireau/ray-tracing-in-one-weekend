@@ -50,9 +50,10 @@ bool Sphere::hit(Ray const& ray, float tMin, float tMax, Hit& result) const
         hasHit = root > tMin && root < tMax;
         if (hasHit)
         {
-            result.t      = root;
-            result.p      = ray.at(result.t);
-            result.normal = unitVector(result.p - m_center);
+            result.t = root;
+            result.p = ray.at(result.t);
+            Vec3 outwardNormal = unitVector(result.p - m_center);
+            result.setFaceNormal(ray, outwardNormal);
         }
     }
     

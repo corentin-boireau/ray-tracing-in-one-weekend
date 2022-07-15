@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <memory>
+#include <limits>
 #include <cstdint>
 #include <cmath>
 
@@ -10,6 +12,7 @@
 #include "Color.h"
 #include "Ray.h"
 #include "Hittable.h"
+#include "HittableList.h"
 #include "Sphere.h"
 
 const char* OUT_FILENAME = "image.png";
@@ -24,18 +27,12 @@ constexpr float VIEWPORT_HEIGHT = 2.0f;
 constexpr float VIEWPORT_WIDTH  = VIEWPORT_HEIGHT * ASPECT_RATIO;
 constexpr float FOCAL_LENGTH    = 1.0f;
 
-const Sphere g_sphere(Point3(0.f, 0.f, -1.f), 0.5f);
-
-Color computeRayColor(Ray ray)
+Color computeRayColor(Ray const& ray, IHittable const& hittable)
 {
     Hit hit;
-    if (g_sphere.hit(ray, -1.f, 1.f, hit))
+    if (hittable.hit(ray, 0, std::numeric_limits<float>::infinity(), hit))
     {
-        return Color(
-            (hit.normal.x() + 1.f) * 0.5f,
-            (hit.normal.y() + 1.f) * 0.5f,
-            (hit.normal.z() + 1.f) * 0.5f
-        );
+        return 0.5f * (Color(1, 1, 1) + hit.normal);
     }
     else
     {
@@ -50,6 +47,13 @@ int main()
 {
     std::cout << "Ray Tracing in One Weekend !" << std::endl;
 
+    // World
+    HittableList worldObjects;
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.5f),   0.1f));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f, -100.5f, -1.0f), 100.0f));
+
+    // Camera
     Point3 origin     (           0.f,             0.f, 0.f);
     Vec3   horizontal (VIEWPORT_WIDTH,             0.f, 0.f);
     Vec3   vertical   (           0.f, VIEWPORT_HEIGHT, 0.f);
@@ -73,7 +77,7 @@ int main()
                 lowerLeftCorner + u * horizontal + v * vertical - origin
             );
 
-            Color pixel = computeRayColor(ray);
+            Color pixel = computeRayColor(ray, worldObjects);
 
             imagePixels.push_back(pixel.to8bit());
         }

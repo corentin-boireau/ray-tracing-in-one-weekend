@@ -3,4 +3,5 @@ add_executable(raytracer
     stb_image_impl.cpp
     Color.cpp
     Sphere.cpp
+    HittableList.cpp
 )
