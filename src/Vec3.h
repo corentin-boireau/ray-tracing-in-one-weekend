@@ -1,9 +1,10 @@
 #pragma once
 
 #include <iostream>
-
 #include <cmath>
 #include <numeric>
+
+#include "utils.h"
 
 class Vec3
 {
@@ -12,6 +13,12 @@ public:
 		: m_coordinates{ 0, 0, 0 } {}
 	Vec3(float x, float y, float z)
 		: m_coordinates{ x, y, z } {}
+
+	static inline Vec3 random() { return Vec3(utils::randomFloat(), utils::randomFloat(), utils::randomFloat()); }
+	static inline Vec3 random(float min, float max) 
+	{
+		return Vec3(utils::randomFloat(min, max), utils::randomFloat(min, max), utils::randomFloat(min, max)); 
+	}
 
 	inline float x() const { return m_coordinates[0]; }
 	inline float y() const { return m_coordinates[1]; }
@@ -67,7 +74,8 @@ public:
 	inline float length()         const { return sqrt(length_squared()); }
 
 	friend float dot(Vec3 const& u, Vec3 const& v);
-private:
+
+protected:
 	float m_coordinates[3];
 };
 
@@ -104,3 +112,6 @@ inline Vec3 unitVector(Vec3 const& v)
 {
 	return v / v.length();
 }
+
+Point3 randomPointInUnitSphere();
+inline Point3 randomPointOnUnitSphere() { return unitVector(randomPointInUnitSphere()); }

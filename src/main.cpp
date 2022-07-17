@@ -26,11 +26,22 @@ constexpr float VIEWPORT_HEIGHT = 2.0f;
 constexpr float VIEWPORT_WIDTH  = VIEWPORT_HEIGHT * ASPECT_RATIO;
 constexpr float FOCAL_LENGTH    = 1.0f;
 
-Color computeRayColor(Ray const& ray, IHittable const& hittable)
+constexpr size_t SAMPLES_BY_PIXEL = 100;
+constexpr size_t MAX_RAY_BOUNCES  = 20;
+
+
+Color computeRayColor(Ray const& ray, IHittable const& hittable, size_t remainingBounces)
 {
+    if (remainingBounces <= 0)
+        return Color(0.f, 0.f, 0.f);
+
     Hit hit;
-    if (hittable.hit(ray, 0, utils::infinity, hit))
-        return 0.5f * (Color(1, 1, 1) + hit.normal);
+    if (hittable.hit(ray, 0.001f, utils::infinity, hit))
+    {
+        Point3 target = hit.p + hit.normal + randomPointOnUnitSphere();
+        Ray newRay(hit.p, target - hit.p);
+        return 0.5f * computeRayColor(newRay, hittable, remainingBounces - 1);
+    }
     else
     {
         Vec3 unitDirection = unitVector(ray.direction());
@@ -62,14 +73,18 @@ int main()
         std::cout << "\rRendering: " << i * 100 / IMAGE_HEIGHT << "%" << std::flush;
         for (size_t j = 0; j < IMAGE_WIDTH; j++) 
         {
-            Ray ray = camera.getRay(
-                static_cast<float>(j)                / (IMAGE_WIDTH - 1),
-                static_cast<float>(IMAGE_HEIGHT - i) / (IMAGE_HEIGHT - 1)
-            );
+            Color pixel(0.f, 0.f, 0.f);
+            for (size_t s = 0; s < SAMPLES_BY_PIXEL; s++)
+            {
+                Ray ray = camera.getRay(
+                    (static_cast<float>(j)                + utils::randomFloat()) / (IMAGE_WIDTH - 1),
+                    (static_cast<float>(IMAGE_HEIGHT - i) + utils::randomFloat()) / (IMAGE_HEIGHT - 1)
+                );
 
-            Color pixel = computeRayColor(ray, worldObjects);
-
-            imagePixels.push_back(pixel.to8bit());
+                pixel += computeRayColor(ray, worldObjects, MAX_RAY_BOUNCES);
+                
+            }
+            imagePixels.push_back(pixel.corrected(SAMPLES_BY_PIXEL).to8bit());
         }
     }
     std::cout << "\33[2K\rRendering: Done." << std::endl;

@@ -4,4 +4,5 @@ add_executable(raytracer
     Color.cpp
     Sphere.cpp
     HittableList.cpp
+    Vec3.cpp
 )
