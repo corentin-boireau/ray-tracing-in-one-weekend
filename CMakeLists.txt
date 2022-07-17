@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.15)
 
 project(Ray_Tracing_in_One_Weekend
     LANGUAGES CXX
