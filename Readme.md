@@ -9,8 +9,7 @@ My implementation of the ray tracer from the tutorial [Ray Tracing in One Weeken
 
 ## Build
 ```console
-mkdir build
-cmake -S . -B build/
+cmake -DCMAKE_BUILD_TYPE="Release" -S . -B build/
 cmake --build build/
 ```
 
