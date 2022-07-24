@@ -54,6 +54,7 @@ bool Sphere::hit(Ray const& ray, float tMin, float tMax, Hit& result) const
             result.p = ray.at(result.t);
             Vec3 outwardNormal = unitVector(result.p - m_center);
             result.setFaceNormal(ray, outwardNormal);
+            result.material = m_material;
         }
     }
     

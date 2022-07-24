@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cmath>
 #include <numeric>
+#include <algorithm>
+#include <array>
 
 #include "utils.h"
 
@@ -70,13 +72,21 @@ public:
 		return *this;
 	}
 
-	inline float length_squared() const { return m_coordinates[0]*m_coordinates[0] + m_coordinates[1]*m_coordinates[1] + m_coordinates[2]*m_coordinates[2]; }
+	inline bool isNearZero() const 
+	{
+		constexpr float threshold = 1e-8;
+		return std::all_of(m_coordinates.begin(), m_coordinates.end(),
+			[](float f) { return fabs(f) < threshold; }
+		);
+	}
+
+	inline float length_squared() const { return std::inner_product(m_coordinates.begin(), m_coordinates.end(), m_coordinates.begin(), 0.f); }
 	inline float length()         const { return sqrt(length_squared()); }
 
 	friend float dot(Vec3 const& u, Vec3 const& v);
 
 protected:
-	float m_coordinates[3];
+	std::array<float, 3> m_coordinates;
 };
 
 inline std::ostream& operator<<(std::ostream &out, Vec3 const& v) 
@@ -96,7 +106,7 @@ inline Vec3 operator/(Vec3 const& v, float f)       { return Vec3(v) /= f; }
 
 inline float dot(Vec3 const& u, Vec3 const& v) 
 { 
-	return std::inner_product(u.m_coordinates, u.m_coordinates + 3, v.m_coordinates, 0.f); 
+	return std::inner_product(u.m_coordinates.begin(), u.m_coordinates.end(), v.m_coordinates.begin(), 0.f);
 }
 
 inline Vec3 cross(Vec3 const& u, Vec3 const& v)
@@ -115,3 +125,4 @@ inline Vec3 unitVector(Vec3 const& v)
 
 Point3 randomPointInUnitSphere();
 inline Point3 randomPointOnUnitSphere() { return unitVector(randomPointInUnitSphere()); }
+inline Vec3 randomUnitVector() { return unitVector(randomPointInUnitSphere()); }

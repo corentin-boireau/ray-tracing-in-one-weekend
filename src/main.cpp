@@ -4,15 +4,20 @@
 
 #include <stb_image_write.h>
 
+#include "utils.h"
+
 #include "Vec3.h"
 #include "Color.h"
 #include "Ray.h"
-#include "Hittable.h"
-#include "HittableList.h"
-#include "Sphere.h"
 #include "Camera.h"
 
-#include "utils.h"
+#include "hittables/IHittable.h"
+#include "hittables/HittableList.h"
+#include "hittables/Sphere.h"
+
+#include "materials/IMaterial.h"
+#include "materials/Diffuse.h"
+
 
 const char* OUT_FILENAME = "image.png";
 
@@ -27,7 +32,7 @@ constexpr float VIEWPORT_WIDTH  = VIEWPORT_HEIGHT * ASPECT_RATIO;
 constexpr float FOCAL_LENGTH    = 1.0f;
 
 constexpr size_t SAMPLES_BY_PIXEL = 100;
-constexpr size_t MAX_RAY_BOUNCES  = 20;
+constexpr size_t MAX_RAY_BOUNCES  = 50;
 
 
 Color computeRayColor(Ray const& ray, IHittable const& hittable, size_t remainingBounces)
@@ -38,9 +43,10 @@ Color computeRayColor(Ray const& ray, IHittable const& hittable, size_t remainin
     Hit hit;
     if (hittable.hit(ray, 0.001f, utils::infinity, hit))
     {
-        Point3 target = hit.p + hit.normal + randomPointOnUnitSphere();
-        Ray newRay(hit.p, target - hit.p);
-        return 0.5f * computeRayColor(newRay, hittable, remainingBounces - 1);
+        Scattering scattering = hit.material->scatter(ray, hit);
+        return scattering.hasScattered
+            ? scattering.attenuation * computeRayColor(scattering.scatteredRay, hittable, remainingBounces - 1)
+            : Color(0, 0, 0);
     }
     else
     {
@@ -55,11 +61,17 @@ int main()
 {
     std::cout << "Ray Tracing in One Weekend !" << std::endl;
 
+    // Materials
+    std::shared_ptr<Diffuse> diffuseRed   = std::make_shared<Diffuse>(Color(.8f, 0.f, 0.f));
+    std::shared_ptr<Diffuse> diffuseGreen = std::make_shared<Diffuse>(Color(0.f, .8f, 0.f));
+    std::shared_ptr<Diffuse> diffuseBlue  = std::make_shared<Diffuse>(Color(0.f, 0.f, .8f));
+
+
     // World
     HittableList worldObjects;
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f));
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.5f),   0.1f));
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f, -100.5f, -1.0f), 100.0f));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f, diffuseRed));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.5f),   0.1f, diffuseBlue));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f, -100.5f, -1.0f), 100.0f, diffuseGreen));
 
     // Camera
     Camera camera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, FOCAL_LENGTH);

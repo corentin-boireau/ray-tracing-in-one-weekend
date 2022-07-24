@@ -1,19 +1,26 @@
 #pragma once
 
-#include "Vec3.h"
-#include "Ray.h"
+#include <memory>
+
+#include "../Vec3.h"
+#include "../Ray.h"
+
+class IMaterial;
 
 struct Hit
 {
-	Point3 p;
-	Vec3   normal;
-	float  t;
-	bool   frontFace;
+	using mat_ptr = std::shared_ptr<IMaterial>;
+
+	Point3  p;
+	Vec3    normal;
+	mat_ptr material;
+	float   t;
+	bool    isFrontFace;
 
 	inline void setFaceNormal(Ray const& ray, Vec3 const& outwardNormal)
 	{
-		frontFace = dot(ray.direction(), outwardNormal) < 0.f;
-		normal    = frontFace ? outwardNormal : -outwardNormal;
+		isFrontFace = dot(ray.direction(), outwardNormal) < 0.f;
+		normal      = isFrontFace ? outwardNormal : -outwardNormal;
 	}
 };
 
