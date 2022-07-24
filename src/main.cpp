@@ -17,6 +17,7 @@
 
 #include "materials/IMaterial.h"
 #include "materials/Diffuse.h"
+#include "materials/Metal.h"
 
 
 const char* OUT_FILENAME = "image.png";
@@ -62,16 +63,28 @@ int main()
     std::cout << "Ray Tracing in One Weekend !" << std::endl;
 
     // Materials
-    std::shared_ptr<Diffuse> diffuseRed   = std::make_shared<Diffuse>(Color(.8f, 0.f, 0.f));
-    std::shared_ptr<Diffuse> diffuseGreen = std::make_shared<Diffuse>(Color(0.f, .8f, 0.f));
-    std::shared_ptr<Diffuse> diffuseBlue  = std::make_shared<Diffuse>(Color(0.f, 0.f, .8f));
+    std::shared_ptr<Diffuse> diffuseRed   = std::make_shared<Diffuse> (Color(.8f, 0.f, 0.f));
+    std::shared_ptr<Diffuse> diffuseGreen = std::make_shared<Diffuse> (Color(0.f, .8f, 0.f));
+    std::shared_ptr<Diffuse> diffuseBlue  = std::make_shared<Diffuse> (Color(0.f, 0.f, .8f));
+    std::shared_ptr<Metal>   metalRed     = std::make_shared<Metal>   (Color(.8f, .3f, .3f));
+    std::shared_ptr<Metal>   metalGreen   = std::make_shared<Metal>   (Color(.3f, .8f, .3f));
+    std::shared_ptr<Metal>   metalBlue    = std::make_shared<Metal>   (Color(.3f, .3f, .8f));
 
+    // auto material_ground = std::make_shared<Diffuse> (Color(.8f, .8f, .0f));
+    // auto material_center = std::make_shared<Diffuse> (Color(.2f, 0.f, .5f));
+    // auto material_left   = std::make_shared<Metal>   (Color(.1f, .1f, .1f));
+    // auto material_right  = std::make_shared<Metal>   (Color(1.f, 0.f, 1.f));
 
     // World
     HittableList worldObjects;
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f, diffuseRed));
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.5f),   0.1f, diffuseBlue));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f, metalRed));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.5f),   0.1f, metalBlue));
     worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f, -100.5f, -1.0f), 100.0f, diffuseGreen));
+
+    // worldObjects.add(std::make_shared<Sphere>(Point3( 0.f, -100.5f, -1.f), 100.0f, material_ground));
+    // worldObjects.add(std::make_shared<Sphere>(Point3( 0.f,    0.0f, -1.f),   0.5f, material_center));
+    // worldObjects.add(std::make_shared<Sphere>(Point3(-1.f,    0.0f, -1.f),   0.5f, material_left));
+    // worldObjects.add(std::make_shared<Sphere>(Point3( 2.f,    0.0f, -2.f),   0.5f, material_right));
 
     // Camera
     Camera camera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, FOCAL_LENGTH);

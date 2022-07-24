@@ -6,4 +6,5 @@ add_executable(raytracer
     hittables/Sphere.cpp
     hittables/HittableList.cpp
     materials/Diffuse.cpp
+    materials/Metal.cpp
 )

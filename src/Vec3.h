@@ -118,11 +118,10 @@ inline Vec3 cross(Vec3 const& u, Vec3 const& v)
 	);
 }
 
-inline Vec3 unitVector(Vec3 const& v) 
-{
-	return v / v.length();
-}
+inline Vec3 unitVector(Vec3 const& v) { return v / v.length(); }
 
 Point3 randomPointInUnitSphere();
 inline Point3 randomPointOnUnitSphere() { return unitVector(randomPointInUnitSphere()); }
 inline Vec3 randomUnitVector() { return unitVector(randomPointInUnitSphere()); }
+
+inline Vec3 reflect(Vec3 const& v, Vec3 const& normal) { return v - 2 * dot(v, normal) * normal; }

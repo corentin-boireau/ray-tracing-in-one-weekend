@@ -4,12 +4,12 @@ My implementation of the ray tracer from the tutorial [Ray Tracing in One Weeken
 
 
 ## Requirements
-- CMake 15.0
+- CMake >= 15.0
 - A C++20-compliant compiler
 
 ## Build
 ```console
-cmake -DCMAKE_BUILD_TYPE="Release" -S . -B build/
+cmake -DCMAKE_BUILD_TYPE="Release" -B build/
 cmake --build build/
 ```
 
