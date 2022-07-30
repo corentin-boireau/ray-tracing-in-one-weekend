@@ -24,7 +24,7 @@ const char* OUT_FILENAME = "image.png";
 
 // Image
 constexpr float  ASPECT_RATIO = 16.f / 9.f;
-constexpr size_t IMAGE_WIDTH  = 720;
+constexpr size_t IMAGE_WIDTH  = 2000;
 constexpr size_t IMAGE_HEIGHT = static_cast<size_t>(IMAGE_WIDTH / ASPECT_RATIO);
 
 // Camera
@@ -66,9 +66,9 @@ int main()
     std::shared_ptr<Diffuse> diffuseRed   = std::make_shared<Diffuse> (Color(.8f, 0.f, 0.f));
     std::shared_ptr<Diffuse> diffuseGreen = std::make_shared<Diffuse> (Color(0.f, .8f, 0.f));
     std::shared_ptr<Diffuse> diffuseBlue  = std::make_shared<Diffuse> (Color(0.f, 0.f, .8f));
-    std::shared_ptr<Metal>   metalRed     = std::make_shared<Metal>   (Color(.8f, .3f, .3f));
-    std::shared_ptr<Metal>   metalGreen   = std::make_shared<Metal>   (Color(.3f, .8f, .3f));
-    std::shared_ptr<Metal>   metalBlue    = std::make_shared<Metal>   (Color(.3f, .3f, .8f));
+    std::shared_ptr<Metal>   metalRed     = std::make_shared<Metal>   (Color(.8f, .3f, .3f), 0.3f);
+    std::shared_ptr<Metal>   metalGreen   = std::make_shared<Metal>   (Color(.3f, .8f, .3f), 1.0f);
+    std::shared_ptr<Metal>   metalBlue    = std::make_shared<Metal>   (Color(.3f, .3f, .8f), 1.0f);
 
     // auto material_ground = std::make_shared<Diffuse> (Color(.8f, .8f, .0f));
     // auto material_center = std::make_shared<Diffuse> (Color(.2f, 0.f, .5f));
