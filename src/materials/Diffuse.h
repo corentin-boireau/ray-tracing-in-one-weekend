@@ -5,9 +5,9 @@
 class Diffuse : public IMaterial
 {
 public:
-	Diffuse(Color const& albedo) : m_albedo(albedo) {}
+    Diffuse(Color const& albedo) : m_albedo(albedo) {}
 
-	Scattering scatter(Ray const& inputRay, Hit const& hit) const override;
+    Scattering scatter(Ray const& inputRay, Hit const& hit) const override;
 private:
-	Color m_albedo;
+    Color m_albedo;
 };

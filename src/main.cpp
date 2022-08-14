@@ -18,13 +18,14 @@
 #include "materials/IMaterial.h"
 #include "materials/Diffuse.h"
 #include "materials/Metal.h"
+#include "materials/Dielectric.h"
 
 
 const char* OUT_FILENAME = "image.png";
 
 // Image
 constexpr float  ASPECT_RATIO = 16.f / 9.f;
-constexpr size_t IMAGE_WIDTH  = 2000;
+constexpr size_t IMAGE_WIDTH  = 1080;
 constexpr size_t IMAGE_HEIGHT = static_cast<size_t>(IMAGE_WIDTH / ASPECT_RATIO);
 
 // Camera
@@ -63,28 +64,33 @@ int main()
     std::cout << "Ray Tracing in One Weekend !" << std::endl;
 
     // Materials
-    std::shared_ptr<Diffuse> diffuseRed   = std::make_shared<Diffuse> (Color(.8f, 0.f, 0.f));
-    std::shared_ptr<Diffuse> diffuseGreen = std::make_shared<Diffuse> (Color(0.f, .8f, 0.f));
-    std::shared_ptr<Diffuse> diffuseBlue  = std::make_shared<Diffuse> (Color(0.f, 0.f, .8f));
-    std::shared_ptr<Metal>   metalRed     = std::make_shared<Metal>   (Color(.8f, .3f, .3f), 0.3f);
-    std::shared_ptr<Metal>   metalGreen   = std::make_shared<Metal>   (Color(.3f, .8f, .3f), 1.0f);
-    std::shared_ptr<Metal>   metalBlue    = std::make_shared<Metal>   (Color(.3f, .3f, .8f), 1.0f);
+    std::shared_ptr<Diffuse>     diffuseRed   = std::make_shared<Diffuse>    (Color(.8f, 0.f, 0.f));
+    std::shared_ptr<Diffuse>     diffuseGreen = std::make_shared<Diffuse>    (Color(0.f, .8f, 0.f));
+    std::shared_ptr<Diffuse>     diffuseBlue  = std::make_shared<Diffuse>    (Color(0.f, 0.f, .8f));
+    std::shared_ptr<Metal>       metalRed     = std::make_shared<Metal>      (Color(.8f, .3f, .3f), 0.3f);
+    std::shared_ptr<Metal>       metalGreen   = std::make_shared<Metal>      (Color(.3f, .8f, .3f), 0.0f);
+    std::shared_ptr<Metal>       metalBlue    = std::make_shared<Metal>      (Color(.3f, .3f, .8f), 1.0f);
+    std::shared_ptr<Dielectric>  glassRed     = std::make_shared<Dielectric> (Color(1.f, .6f, .6f), 1.5f);
+    std::shared_ptr<Dielectric>  glassBlue    = std::make_shared<Dielectric> (Color(.6f, .6f, 1.f), 1.5f);
+    std::shared_ptr<Dielectric>  glassWhite   = std::make_shared<Dielectric> (Color(1.f, 1.f, 1.f), 1.5f);
 
-    // auto material_ground = std::make_shared<Diffuse> (Color(.8f, .8f, .0f));
-    // auto material_center = std::make_shared<Diffuse> (Color(.2f, 0.f, .5f));
-    // auto material_left   = std::make_shared<Metal>   (Color(.1f, .1f, .1f));
-    // auto material_right  = std::make_shared<Metal>   (Color(1.f, 0.f, 1.f));
+    // auto material_ground = std::make_shared<Diffuse>     (Color(.8f, .8f, .0f));
+    // auto material_center = std::make_shared<Diffuse>     (Color(.1f, .2f, .5f));
+    // auto material_left   = std::make_shared<Diaelectric> (Color(1.f, 1.f, 1.f), 1.5f);
+    // auto material_right  = std::make_shared<Metal>       (Color(.8f, .6f, .2f), 0.f);
 
     // World
     HittableList worldObjects;
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f, metalRed));
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.5f),   0.1f, metalBlue));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f, diffuseRed));
+    worldObjects.add(std::make_shared<Sphere>(Point3(-0.7f,   -0.2f, -0.7f),   0.3f, metalGreen));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.5f),   0.1f, glassBlue));
     worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f, -100.5f, -1.0f), 100.0f, diffuseGreen));
 
     // worldObjects.add(std::make_shared<Sphere>(Point3( 0.f, -100.5f, -1.f), 100.0f, material_ground));
     // worldObjects.add(std::make_shared<Sphere>(Point3( 0.f,    0.0f, -1.f),   0.5f, material_center));
     // worldObjects.add(std::make_shared<Sphere>(Point3(-1.f,    0.0f, -1.f),   0.5f, material_left));
-    // worldObjects.add(std::make_shared<Sphere>(Point3( 2.f,    0.0f, -2.f),   0.5f, material_right));
+    // worldObjects.add(std::make_shared<Sphere>(Point3(-1.f,    0.0f, -1.f),   -0.4f, material_left));
+    // worldObjects.add(std::make_shared<Sphere>(Point3( 1.f,    0.0f, -1.f),   0.5f, material_right));
 
     // Camera
     Camera camera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, FOCAL_LENGTH);
@@ -114,5 +120,9 @@ int main()
     }
     std::cout << "\33[2K\rRendering: Done." << std::endl;
     
-    stbi_write_png(OUT_FILENAME, IMAGE_WIDTH, IMAGE_HEIGHT, 3, imagePixels.data(), 0);
+    if(stbi_write_png(OUT_FILENAME, IMAGE_WIDTH, IMAGE_HEIGHT, 3, imagePixels.data(), 0))
+        std::cout << "Image written to " << OUT_FILENAME << std::endl;
+    else
+        std::cout << "Failed to write image to " << OUT_FILENAME << std::endl;
+
 }

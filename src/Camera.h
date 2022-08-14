@@ -6,7 +6,7 @@
 class Camera
 {
 public:
-	Camera(float viewportWidth, float viewportHeight, float focalLength) :
+    Camera(float viewportWidth, float viewportHeight, float focalLength) :
         m_origin          (          0.f,            0.f, 0.f),
         m_horizontal      (viewportWidth,            0.f, 0.f),
         m_vertical        (          0.f, viewportHeight, 0.f),

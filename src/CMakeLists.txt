@@ -7,4 +7,5 @@ add_executable(raytracer
     hittables/HittableList.cpp
     materials/Diffuse.cpp
     materials/Metal.cpp
+    materials/Dielectric.cpp
 )

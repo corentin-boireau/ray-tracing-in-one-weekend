@@ -1,0 +1,39 @@
+#include "Dielectric.h"
+
+constexpr float AIR_REFRACTION_INDEX = 1.f;
+
+Scattering Dielectric::scatter(Ray const& inputRay, Hit const& hit) const
+{
+    double refractionRatio = hit.isFrontFace
+        ? AIR_REFRACTION_INDEX / m_refractionIndex
+        : m_refractionIndex    / AIR_REFRACTION_INDEX;
+
+    Vec3 unitDirection = unitVector(inputRay.direction());
+    float cosTheta = fmin(dot(-unitDirection, hit.normal), 1.f);
+    float sinTheta = sqrt(1 - cosTheta * cosTheta);
+
+    bool canRefract = refractionRatio * sinTheta <= 1.f;
+
+    return Scattering(
+        true,
+        m_color,
+        Ray(hit.p, canRefract && reflectance(cosTheta, hit.isFrontFace) < utils::randomFloat()
+            ? refract(unitDirection, hit.normal, refractionRatio)
+            : reflect(unitDirection, hit.normal)
+        )
+    );
+}
+
+float Dielectric::reflectance(float cosTheta, bool isInAir) const
+{ // Use Schlick's approximation for reflectance
+    float n1, n2;
+    if (isInAir)
+        n1 = AIR_REFRACTION_INDEX, n2 = m_refractionIndex;
+    else
+        n1 = m_refractionIndex, n2 = AIR_REFRACTION_INDEX;
+
+    float r0 = pow((n1 - n2) / (n1 + n2), 2);
+    // r0 is the reflection coefficient of a ray that is parallel to the normal, i.e. when theta = 0
+
+    return r0 + (1 - r0) * pow(1 - cosTheta, 5);
+}

@@ -9,19 +9,19 @@ class IMaterial;
 
 struct Hit
 {
-	using mat_ptr = std::shared_ptr<IMaterial>;
+    using mat_ptr = std::shared_ptr<IMaterial>;
 
-	Point3  p;
-	Vec3    normal;
-	mat_ptr material;
-	float   t;
-	bool    isFrontFace;
+    Point3  p;
+    Vec3    normal;
+    mat_ptr material;
+    float   t;
+    bool    isFrontFace;
 
-	inline void setFaceNormal(Ray const& ray, Vec3 const& outwardNormal)
-	{
-		isFrontFace = dot(ray.direction(), outwardNormal) < 0.f;
-		normal      = isFrontFace ? outwardNormal : -outwardNormal;
-	}
+    inline void setFaceNormal(Ray const& ray, Vec3 const& outwardNormal)
+    {
+        isFrontFace = dot(ray.direction(), outwardNormal) < 0.f;
+        normal      = isFrontFace ? outwardNormal : -outwardNormal;
+    }
 };
 
 /**
@@ -30,8 +30,8 @@ struct Hit
 class IHittable
 {
 public:
-	/**
-	  Returns whether this object has been hit by the given ray.
-	*/
-	virtual bool hit(Ray const& ray, float tMin, float tMax, Hit& result) const = 0;
+    /**
+      Returns whether this object has been hit by the given ray.
+    */
+    virtual bool hit(Ray const& ray, float tMin, float tMax, Hit& result) const = 0;
 };

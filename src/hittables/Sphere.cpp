@@ -34,9 +34,9 @@ bool Sphere::hit(Ray const& ray, float tMin, float tMax, Hit& result) const
     <=> t = (-h - sqrt((h² - ac)) / a
     */
     Vec3 oc = ray.origin() - m_center;
-    float a = ray.direction().length_squared();
+    float a = ray.direction().lengthSquared();
     float h = dot(ray.direction(), oc);
-    float c = oc.length_squared() - (m_radius * m_radius);
+    float c = oc.lengthSquared() - (m_radius * m_radius);
 
     float delta = h*h - a*c;
 
