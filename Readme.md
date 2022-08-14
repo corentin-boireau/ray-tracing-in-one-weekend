@@ -2,6 +2,7 @@
 
 My implementation of the ray tracer from the tutorial [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) by Peter Shirley.
 
+![current_output](./image.png)
 
 ## Requirements
 - CMake >= 15.0
