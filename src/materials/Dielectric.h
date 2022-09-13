@@ -8,7 +8,7 @@ public:
     Scattering scatter(Ray const& inputRay, Hit const& hit) const override;
 
 private:
-    float reflectance(float cosTheta, bool isInAir) const;
+    float reflectance(float cosTheta) const;
 
 private:
     Color m_color;

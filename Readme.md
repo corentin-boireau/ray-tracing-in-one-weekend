@@ -5,7 +5,7 @@ My implementation of the ray tracer from the tutorial [_Ray Tracing in One Weeke
 ![current_output](./image.png)
 
 ## Requirements
-- CMake >= 15.0
+- CMake >= 3.15
 - A C++20-compliant compiler
 
 ## Build

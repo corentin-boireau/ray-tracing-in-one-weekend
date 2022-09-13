@@ -17,20 +17,17 @@ Scattering Dielectric::scatter(Ray const& inputRay, Hit const& hit) const
     return Scattering(
         true,
         m_color,
-        Ray(hit.p, canRefract && reflectance(cosTheta, hit.isFrontFace) < utils::randomFloat()
+        Ray(hit.p, canRefract && reflectance(cosTheta) < utils::randomFloat()
             ? refract(unitDirection, hit.normal, refractionRatio)
             : reflect(unitDirection, hit.normal)
         )
     );
 }
 
-float Dielectric::reflectance(float cosTheta, bool isInAir) const
+float Dielectric::reflectance(float cosTheta) const
 { // Use Schlick's approximation for reflectance
-    float n1, n2;
-    if (isInAir)
-        n1 = AIR_REFRACTION_INDEX, n2 = m_refractionIndex;
-    else
-        n1 = m_refractionIndex, n2 = AIR_REFRACTION_INDEX;
+    float const& n1 = AIR_REFRACTION_INDEX;
+    float const& n2 = m_refractionIndex;
 
     float r0 = pow((n1 - n2) / (n1 + n2), 2);
     // r0 is the reflection coefficient of a ray that is parallel to the normal, i.e. when theta = 0
