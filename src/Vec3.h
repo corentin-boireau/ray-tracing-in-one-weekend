@@ -11,9 +11,9 @@
 class Vec3
 {
 public:
-    Vec3() 
+    constexpr Vec3() 
         : m_coordinates{ 0, 0, 0 } {}
-    Vec3(float x, float y, float z)
+    constexpr Vec3(float x, float y, float z)
         : m_coordinates{ x, y, z } {}
 
     static inline Vec3 random() { return Vec3(utils::randomFloat(), utils::randomFloat(), utils::randomFloat()); }
@@ -91,7 +91,7 @@ protected:
 
 inline std::ostream& operator<<(std::ostream &out, Vec3 const& v) 
 {
-    out << "(" << v.x() << " ," << v.y() << " ," << v.z() << ")";
+    out << "(" << v.x() << ", " << v.y() << ", " << v.z() << ")";
     return out;
 }
 

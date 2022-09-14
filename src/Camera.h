@@ -60,6 +60,7 @@ private:
         float  ratio,
         Vec3   u
     ):
+        m_origin          (lookFrom),
         m_horizontal      (ratio * vph * u),
         m_vertical        (vph * cross(w, u)),
         m_lowerLeftCorner (m_origin - m_horizontal/2 - m_vertical/2 - w)

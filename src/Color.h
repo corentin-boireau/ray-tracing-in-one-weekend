@@ -12,9 +12,9 @@ struct Color_uint8_t
 class Color : public Vec3
 {
 public:
-    Color(float r, float g, float b) : Vec3(r, g, b) {}
-    Color(Vec3 const& v)  : Vec3(v) {}  // Used for implicit conversion
-    Color(Color const& c) = default;
+    constexpr Color(float r, float g, float b) : Vec3(r, g, b) {}
+    constexpr Color(Vec3 const& v)  : Vec3(v) {}  // Used for implicit conversion
+    constexpr Color(Color const& c) = default;
     inline Color& operator=(Color const& c) = default;
 
 

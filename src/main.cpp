@@ -29,12 +29,12 @@ constexpr size_t IMAGE_WIDTH  = 1080;
 constexpr size_t IMAGE_HEIGHT = static_cast<size_t>(IMAGE_WIDTH / ASPECT_RATIO);
 
 // Camera
-constexpr float  VERTICAL_FOV_DEG = 90.0f;
-const     Point3 LOOK_FROM       = Point3 ( 0.f,  1.f,  0.f);
-const     Point3 LOOK_AT         = Point3 ( 0.f,  0.f, -1.f);
-const     Vec3   VIEW_UP         = Vec3   ( 0.f,  1.f,  0.f);
+constexpr float  VERTICAL_FOV_DEG = 30.0f;
+constexpr Point3 LOOK_FROM        = Point3 ( 2.f,  2.f,  1.f);
+constexpr Point3 LOOK_AT          = Point3 ( 0.f,  0.f, -1.f);
+constexpr Vec3   VIEW_UP          = Vec3   ( 0.f,  1.f,  0.f);
 
-constexpr size_t SAMPLES_BY_PIXEL = 10;
+constexpr size_t SAMPLES_BY_PIXEL = 100;
 constexpr size_t MAX_RAY_BOUNCES  = 50;
 
 
@@ -84,7 +84,7 @@ int main()
     HittableList worldObjects;
     worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f, diffuseRed));
     worldObjects.add(std::make_shared<Sphere>(Point3(-0.7f,   -0.2f, -0.7f),   0.3f, metalGreen));
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.5f),   0.1f, glassBlue));
+    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.4f),   0.1f, glassBlue));
     worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f, -100.5f, -1.0f), 100.0f, diffuseGreen));
 
     // worldObjects.add(std::make_shared<Sphere>(Point3( 0.f, -100.5f, -1.f), 100.0f, material_ground));
