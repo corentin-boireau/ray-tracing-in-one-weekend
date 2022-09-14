@@ -32,5 +32,5 @@ float Dielectric::reflectance(float cosTheta) const
     float r0 = pow((n1 - n2) / (n1 + n2), 2);
     // r0 is the reflection coefficient of a ray that is parallel to the normal, i.e. when theta = 0
 
-    return r0 + (1 - r0) * pow(1 - cosTheta, 5);
+    return r0 + (1.f - r0) * static_cast<float>(pow(1.f - cosTheta, 5));
 }
