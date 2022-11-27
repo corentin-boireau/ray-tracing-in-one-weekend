@@ -10,18 +10,18 @@ bool Sphere::hit(Ray const& ray, float tMin, float tMax, Hit& result) const
     of a sphere in this space.
 
     Let P(t) a ray
-      P(t) = A + tb
+      P(t) = A + tB
     with 
       A the origin    of the ray
-      b the direction of the ray
+      B the direction of the ray
 
     P(t) is on the sphere if
         (P(t) - C) . (P(t) - C) = r²
-    <=> (A + tb - C) . (A + tb - C) = r²
-    <=> t²b . b + 2tb . (A - C) + (A - C) . (A - C) - r² = 0
+    <=> (A + tB - C) . (A + tB - C) = r²
+    <=> t²B . B + 2tB . (A - C) + (A - C) . (A - C) - r² = 0
     Identify to the form ax² + bx + c --> 
-      a = (b . b)                = ||b||²
-      b = 2b . (A - C)           = 2 (b . (A -C))
+      a = (B . B)                = ||B||²
+      b = 2B . (A - C)           = 2 (B . (A -C))
       c = (A - C) . (A - C) - r² = ||(A - C)||² - r²
     And
       delta = b² - 4ac
@@ -33,7 +33,7 @@ bool Sphere::hit(Ray const& ray, float tMin, float tMax, Hit& result) const
     <=> t = (-2h - 2 sqrt((h² - ac)) / (2a)
     <=> t = (-h - sqrt((h² - ac)) / a
     */
-    Vec3 oc = ray.origin() - m_center;
+    Vec3 oc = ray.origin() - m_center;  // A - C
     float a = ray.direction().lengthSquared();
     float h = dot(ray.direction(), oc);
     float c = oc.lengthSquared() - (m_radius * m_radius);
