@@ -25,17 +25,54 @@ const char* OUT_FILENAME = "image.png";
 
 // Image
 constexpr float  ASPECT_RATIO = 16.f / 9.f;
-constexpr size_t IMAGE_WIDTH  = 1080;
+constexpr size_t IMAGE_WIDTH  = 1200;
 constexpr size_t IMAGE_HEIGHT = static_cast<size_t>(IMAGE_WIDTH / ASPECT_RATIO);
 
 // Camera
 constexpr float  VERTICAL_FOV_DEG = 30.0f;
-constexpr Point3 LOOK_FROM        = Point3 ( 2.f,  2.f,  1.f);
-constexpr Point3 LOOK_AT          = Point3 ( 0.f,  0.f, -1.f);
-constexpr Vec3   VIEW_UP          = Vec3   ( 0.f,  1.f,  0.f);
+constexpr Point3 LOOK_FROM        = Point3 (13.f, 2.f, 3.f);
+constexpr Point3 LOOK_AT          = Point3 ( 0.f, 0.f, 0.f);
+constexpr Vec3   VIEW_UP          = Vec3   ( 0.f, 1.f, 0.f);
 
-constexpr size_t SAMPLES_BY_PIXEL = 100;
+constexpr size_t SAMPLES_BY_PIXEL = 500;
 constexpr size_t MAX_RAY_BOUNCES  = 50;
+
+HittableList randomScene() 
+{
+    HittableList world;
+
+    mat_ptr groundMaterial = std::make_shared<Diffuse>(Color(0.5f, 0.5f, 0.5f));
+    world.add(std::make_shared<Sphere>(Point3(0.f, -1000.f, 0.f), 1000, groundMaterial));
+
+    for (int a = -11; a < 11; a++) 
+    {
+        for (int b = -11; b < 11; b++) 
+        {
+            float chooseMat = utils::randomFloat();
+            Point3 center(a + 0.9f * utils::randomFloat(), 0.2f, b + 0.9f * utils::randomFloat());
+
+            if ((center - Point3(4, 0.2, 0)).length() > 0.9) 
+            {
+                world.add(std::make_shared<Sphere>(center, 0.2f, 
+                    chooseMat < 0.80f ? static_cast<mat_ptr>(std::make_shared<Diffuse>    (Color::random() * Color::random())                   ) :
+                    chooseMat < 0.95f ? static_cast<mat_ptr>(std::make_shared<Metal>      (Color::random(0.5f, 1.f), utils::randomFloat(0.f, 0.5f))) :
+                                        static_cast<mat_ptr>(std::make_shared<Dielectric> (Color::random(0.8f, 1.f), 1.5f)                      ) 
+                ));
+            }
+        }
+    }
+
+    mat_ptr material1 = std::make_shared<Dielectric>(Color(1.f, 1.f, 1.f), 1.5f);
+    world.add(std::make_shared<Sphere>(Point3(0.f, 1.f, 0.f), 1.0f, material1));
+
+    mat_ptr material2 = std::make_shared<Diffuse>(Color(0.4, 0.2, 0.1));
+    world.add(std::make_shared<Sphere>(Point3(-4, 1, 0), 1.0, material2));
+
+    mat_ptr material3 = std::make_shared<Metal>(Color(0.7, 0.6, 0.5), 0.0);
+    world.add(std::make_shared<Sphere>(Point3(4, 1, 0), 1.0, material3));
+
+    return world;
+}
 
 
 Color computeRayColor(Ray const& ray, IHittable const& hittable, size_t remainingBounces)
@@ -81,11 +118,11 @@ int main()
     // auto material_right  = std::make_shared<Metal>       (Color(.8f, .6f, .2f), 0.f);
 
     // World
-    HittableList worldObjects;
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f, diffuseRed));
-    worldObjects.add(std::make_shared<Sphere>(Point3(-0.7f,   -0.2f, -0.7f),   0.3f, metalGreen));
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.4f),   0.1f, glassBlue));
-    worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f, -100.5f, -1.0f), 100.0f, diffuseGreen));
+    HittableList worldObjects = randomScene();
+    // worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f,    0.0f, -1.0f),   0.5f, diffuseRed));
+    // worldObjects.add(std::make_shared<Sphere>(Point3(-0.7f,   -0.2f, -0.7f),   0.3f, metalGreen));
+    // worldObjects.add(std::make_shared<Sphere>(Point3( 0.1f,    0.2f, -0.4f),   0.1f, glassBlue));
+    // worldObjects.add(std::make_shared<Sphere>(Point3( 0.0f, -100.5f, -1.0f), 100.0f, diffuseGreen));
 
     // worldObjects.add(std::make_shared<Sphere>(Point3( 0.f, -100.5f, -1.f), 100.0f, material_ground));
     // worldObjects.add(std::make_shared<Sphere>(Point3( 0.f,    0.0f, -1.f),   0.5f, material_center));

@@ -18,3 +18,5 @@ class IMaterial
 public:
     virtual Scattering scatter(Ray const& inputRay, Hit const& hit) const = 0;
 };
+
+using mat_ptr = std::shared_ptr<IMaterial>;
